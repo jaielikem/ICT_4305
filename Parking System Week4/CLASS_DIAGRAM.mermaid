@@ -1,0 +1,122 @@
+classDiagram
+    class Address {
+        -String streetAddress1
+        -String streetAddress2
+        -String city
+        -String state
+        -String zipCode
+        +Address(streetAddress1, streetAddress2, city, state, zipCode)
+        +Address(streetAddress1, city, state, zipCode)
+        +getAddressInfo() String
+        +getStreetAddress1() String
+        +getStreetAddress2() String
+        +getCity() String
+        +getState() String
+        +getZipCode() String
+        +setStreetAddress1(streetAddress1)
+        +setStreetAddress2(streetAddress2)
+        +setCity(city)
+        +setState(state)
+        +setZipCode(zipCode)
+        +toString() String
+    }
+
+    class CarType {
+        <<enumeration>>
+        COMPACT
+        SUV
+        +getDiscountMultiplier() double
+    }
+
+    class Car {
+        -String permit
+        -LocalDate permitExpiration
+        -String license
+        -CarType type
+        -String owner
+        +Car(permit, permitExpiration, license, type, owner)
+        +Car(license, type, owner)
+        +isPermitValid() boolean
+        +assignPermit(permit, permitExpiration)
+        +getPermit() String
+        +getPermitExpiration() LocalDate
+        +getLicense() String
+        +getType() CarType
+        +getOwner() String
+        +setPermit(permit)
+        +setPermitExpiration(permitExpiration)
+        +setLicense(license)
+        +setType(type)
+        +setOwner(owner)
+        +toString() String
+    }
+
+    class Customer {
+        -String customerId
+        -String name
+        -Address address
+        -String phoneNumber
+        -List~Car~ registeredCars
+        -static int permitCounter
+        +Customer(customerId, name, address, phoneNumber)
+        +register(license, type) Car
+        +getRegisteredCars() List~Car~
+        +findCarByLicense(license) Car
+        +getCustomerId() String
+        +getName() String
+        +getAddress() Address
+        +getPhoneNumber() String
+        +setCustomerId(customerId)
+        +setName(name)
+        +setAddress(address)
+        +setPhoneNumber(phoneNumber)
+        +toString() String
+    }
+
+    class ParkingLot {
+        -String lotId
+        -Address address
+        -int capacity
+        -Map~String, ParkingTransaction~ currentlyParked
+        +ParkingLot(lotId, address, capacity)
+        +entry(car)
+        +exit(license) ParkingTransaction
+        +getCurrentOccupancy() int
+        +getAvailableSpaces() int
+        +isCarParked(license) boolean
+        +getTransaction(license) ParkingTransaction
+        +getLotId() String
+        +getAddress() Address
+        +getCapacity() int
+        +setLotId(lotId)
+        +setAddress(address)
+        +setCapacity(capacity)
+        +toString() String
+    }
+
+    class ParkingTransaction {
+        -String license
+        -String permit
+        -Instant entryTime
+        -Instant exitTime
+        -String lotId
+        -CarType carType
+        +ParkingTransaction(license, permit, entryTime, lotId, carType)
+        +getParkingDuration() Duration
+        +getHoursParked() long
+        +getLicense() String
+        +getPermit() String
+        +getEntryTime() Instant
+        +getExitTime() Instant
+        +getLotId() String
+        +getCarType() CarType
+        +setExitTime(exitTime)
+        +toString() String
+    }
+
+    Customer "1" --> "1" Address : has
+    Customer "1" --> "0..*" Car : registers
+    Car "1" --> "1" CarType : has type
+    ParkingLot "1" --> "1" Address : located at
+    ParkingLot "1" --> "0..*" ParkingTransaction : tracks
+    ParkingTransaction "1" --> "1" CarType : records
